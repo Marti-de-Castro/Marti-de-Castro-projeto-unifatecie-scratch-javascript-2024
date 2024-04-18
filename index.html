@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Unifatecie - Projeto de Ensino Ferramenta Scratch e JavaScript</title>
+        <link rel="stylesheet" href="/css/style.css" type="text/css">
+    </head>
+    <body>
+        <div class="game">
+            <div id="dino"></div>
+            <div id="chao"></div>
+            <div id="cacto"></div>
+            <div id="nuvem"></div>
+            <div id="gameover"></div>
+        </div>
+        
+        <script>
+            var jogoAtivo = true;
+
+            function pulo() {
+                if(!jogoAtivo) return;
+                if(!dino.classList.contains("pulo")) {
+                    dino.classList.add("pulo");
+                    setTimeout(function() {
+                        dino.classList.remove("pulo");
+                    },500);
+                }
+            }
+
+            document.addEventListener("keydown", function(event) {
+                if (event.code === "Space") {
+                    pulo();
+                }
+            });
+
+            // Chão
+            let chaoPosition = 0;
+
+            function moveChao() {
+                if(!jogoAtivo) return;
+                chaoPosition -= 5;
+                chao.style.backgroundPositionX = chaoPosition + 'px';
+                    requestAnimationFrame(moveChao);
+            }
+
+            moveChao();
+
+            //Cacto
+            let cactoPosition = 0;
+
+            function moveCacto() {
+                if(!jogoAtivo) return;
+                cactoPosition -= 5;
+                cacto.style.left = cactoPosition + 'px';
+                if(cactoPosition < 5) {
+                    cactoPosition = 590;
+                }
+                requestAnimationFrame(moveCacto);
+            }
+
+            moveCacto();
+
+            // Nuvem
+
+            let nuvemPosition = 0;
+
+            function moveNuvem() {
+                if(!jogoAtivo) return;
+                nuvemPosition -= 1.4;
+                nuvem.style.left = nuvemPosition + 'px';
+                if(nuvemPosition < 5) {
+                    nuvemPosition = 590;
+                }
+                requestAnimationFrame(moveNuvem);
+            }
+
+            moveNuvem();
+
+            // Animação
+            var step = 1;
+
+            function animateDino() {
+                if(!jogoAtivo) {
+                    dino.style.backgroundImage = "url(img/scared-removebg-preview.png)";
+                } else {
+                    if(dino.classList.contains("pulo")) {
+                        dino.style.backgroundImage = "url(img/Normal-removebg-preview.png)";
+                    } else {
+                        if(step == 1) {
+                            dino.style.backgroundImage = "url(img/step1-removebg-preview.png)";
+                            step = 2;
+                        } else {
+                            dino.style.backgroundImage = "url(img/step2-removebg-preview.png)";
+                            step = 1;
+                        }
+                    }
+                }
+            }
+
+            setInterval(animateDino, 100);
+
+            function colisao(rect1, rect2) {
+                return !(rect1.right < rect2.left ||
+                    rect1.left > rect2.right ||
+                    rect1.bottom < rect2.top || 
+                    rect1.top > rect2.bottom);
+            }
+
+            function verificarColisao() {
+                var dinoRect = document.getElementById("dino").getBoundingClientRect();
+                var cactoRect = document.getElementById("cacto").getBoundingClientRect();
+
+                if(colisao(dinoRect, cactoRect)) {
+                    jogoAtivo = false;
+                    clearInterval(verificacao);
+                    console.log("Colisão detectada!")
+                    atualizarTelaGameOver();
+                }
+            }
+
+            var verificacao = setInterval(verificarColisao, 100);
+
+            function atualizarTelaGameOver() {
+                var elementoGameOver = document.getElementById("gameover");
+                elementoGameOver.style.visibility = "visible";    
+            }
+        </script>
+    </body>
+</html> 
